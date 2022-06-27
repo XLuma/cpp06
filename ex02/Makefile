@@ -1,6 +1,6 @@
 NAME = conversion
 CPP = c++
-FLAGS = -Wall -Werror -Wextra -g
+FLAGS = -Wall -Werror -Wextra
 STD = -std=c++98
 SRCS = main.cpp Convert.cpp
 .cpp.o:

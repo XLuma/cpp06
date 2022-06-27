@@ -50,4 +50,5 @@ public:
 	void setDef(const std::string &def);
 };
 bool isLiteral(std::string str);
+std::string convertLiteralToDouble(std::string str);
 #endif //PISCINE_CP_CONVERSION_H

@@ -4,6 +4,7 @@
 
 #include "Convert.h"
 
+// -- CLASS CONSTRUCTORS AND DESTRUCTORS -- //
 Convert::Convert() {
 	i_arg = 0;
 	d_arg = 0;
@@ -41,6 +42,7 @@ Convert::~Convert(){
 
 }
 
+// -- Type discovery and conversion -- //
 void Convert::detect_type(char *arg)
 {
 	int i = 0;
@@ -64,7 +66,7 @@ void Convert::detect_type(char *arg)
 			has_num = 1;
 		if (arg[i] == '.')
 			has_dot = 1;
-		if (arg[i] == 'f' && i == (int)std::strlen(arg) - 1)
+		if (arg[i] == 'f' && i == (int)std::strlen(arg))
 			has_f = 1;
 		if (std::isalpha(arg[i]))
 			has_letter = 1;
@@ -72,17 +74,14 @@ void Convert::detect_type(char *arg)
 	}
 	if (has_num == 1 && has_dot == 1 && has_f == 1) {
 		this->setType(FLOAT);
-		//this->setFArg(std::stof(this->def));
 		this->f_arg = std::stof(this->def);
 	}
 	else if (has_num == 1 && has_dot == 1 && has_f == 0) {
 		this->setType(DOUBLE);
-		//this->setDArg(std::stod(this->def));
 		this->d_arg = std::stod(this->def);
 	}
 	else if (has_num == 1 && has_dot == 0 && has_f == 0 && has_letter == 0) {
 		this->setType(INT);
-		//this->setIArg(std::stoi(this->def));
 		if (std::stol(this->def) >= INT_MIN && std::stol(this->def) <= INT_MAX) {
 			this->i_arg = std::stoi(this->def);
 			this->c_arg = this->i_arg;
@@ -105,7 +104,6 @@ void Convert::convert_data()
 			break;
 		case INT:
 			this->f_arg = static_cast<float>(this->i_arg);
-			std::cout << std::stof(this->def) << std::endl;
 			this->c_arg = static_cast<char>(this->i_arg);
 			this->d_arg = static_cast<double>(this->i_arg);
 			break;
@@ -125,9 +123,10 @@ void Convert::convert_data()
 
 }
 
+// -- Checks against each type for printing -- //
 void Convert::getIArg() const {
 	std::cout << "int: ";
-	if (this->type == PSEUDOLIT)
+	if (this->type == PSEUDOLIT || this->type == INVALID)
 		std::cout << "impossible" << std::endl;
 	else if (this->isWrong == true)
 		std::cout << "overflow" << std::endl;
@@ -140,17 +139,19 @@ void Convert::getIArg() const {
 void Convert::getFArg() const {
 	std::cout << "float: ";
 	if (this->type == PSEUDOLIT) {
-		if (this->def == "-inf" || this->def == "inf")
+		if (this->def == "-inf" || this->def == "+inf" || this->def == "nan")
 			std::cout << this->def << "f" << std::endl;
 		else
 			std::cout << this->def << std::endl;
 	}
-	//else if (this->type == INT || this->type == DOUBLE)
-	//{
-	//
-	//}
-	else
+	else if (this->type == INVALID)
+		std::cout << "impossible" << std::endl;
+	else if (std::stol(this->def) >= INT_MIN && std::stol(this->def) <= INT_MAX)
+	{
 		std::cout << std::fixed << std::setprecision(1) << this->f_arg << "f" << std::endl;
+	}
+	else
+		std::cout << this->def << ".0f" << std::endl;
 }
 
 
@@ -166,10 +167,17 @@ void Convert::getCArg() const {
 
 void Convert::getDArg() const {
 	std::cout << "double: ";
-	if (this->type == PSEUDOLIT)
-		std::cout << this->def <<std::endl;
+	if (this->type == PSEUDOLIT) {
+		std::cout << convertLiteralToDouble(this->def) << std::endl;
+	}
+	else if (this->type == INVALID)
+		std::cout << "impossible" << std::endl;
+	else if (std::stol(this->def) >= INT_MIN && std::stol(this->def) <= INT_MAX)
+	{
+		std::cout << std::fixed << std::setprecision(1) << this->d_arg << std::endl;
+	}
 	else
-		std::cout << d_arg << std::endl;
+		std::cout << this->def << ".0" << std::endl;
 }
 
 int Convert::getType() const {
@@ -195,9 +203,21 @@ void Convert::print_data() {
 	getDArg();
 }
 
+// -- External Functions -- //
 bool isLiteral(std::string str)
 {
 	if (str == "nan"|| str == "nanf" || str == "+inff" || str == "-inff" || str == "-inf" || str == "+inf")
 		return true;
 	return false;
+}
+
+std::string convertLiteralToDouble(std::string str)
+{
+	if (str == "nanf")
+		return "nan";
+	if (str == "+inff")
+		return "+inf";
+	if (str == "-inff")
+		return "-inf";
+	return str;
 }
