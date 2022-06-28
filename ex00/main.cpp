@@ -20,7 +20,8 @@ int main(int argc, char **argv)
 		conversion.print_data();
 	}
 	catch (std::exception &e) {
-		std::cout << "Conversion aborted. Cannot go bigger than a long !" << std::endl;
+		std::cout << e.what() << std::endl;
+		std::cout << "Conversion aborted because of the reason above. Check back your args !" << std::endl;
 	}
 	return 0;
 }

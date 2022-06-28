@@ -62,17 +62,22 @@ void Convert::detect_type(char *arg)
 	{
 		if (arg[i] == '-' && i == 0)
 			has_neg = 1;
-		if (std::isdigit(arg[i]))
+		else if (std::isdigit(arg[i]))
 			has_num = 1;
-		if (arg[i] == '.')
+		else if (arg[i] == '.')
 			has_dot = 1;
-		if (arg[i] == 'f' && i == (int)std::strlen(arg))
+		else if (arg[i] == 'f' && i == (int)std::strlen(arg))
 			has_f = 1;
 		if (std::isalpha(arg[i]))
 			has_letter = 1;
 		i++;
 	}
-	if (has_num == 1 && has_dot == 1 && has_f == 1) {
+	if (i == 1)
+	{
+		this->setType(CHAR);
+		this->c_arg = atoi(this->def.c_str());
+	}
+	else if (has_num == 1 && has_dot == 1 && has_f == 1) {
 		this->setType(FLOAT);
 		this->f_arg = std::stof(this->def);
 	}
@@ -130,7 +135,7 @@ void Convert::getIArg() const {
 		std::cout << "impossible" << std::endl;
 	else if (this->isWrong == true)
 		std::cout << "overflow" << std::endl;
-	else if (stoi(this->def) < INT_MIN || stoi(this->def) > INT_MAX)
+	else if (std::stol(this->def) < INT_MIN || std::stol(this->def) > INT_MAX)
 		std::cout << "overflow" << std::endl;
 	else
 		std::cout << this->i_arg << std::endl;
@@ -151,7 +156,7 @@ void Convert::getFArg() const {
 		std::cout << std::fixed << std::setprecision(1) << this->f_arg << "f" << std::endl;
 	}
 	else
-		std::cout << this->def << ".0f" << std::endl;
+		std::cout << this->def << "f" << std::endl;
 }
 
 
@@ -177,7 +182,7 @@ void Convert::getDArg() const {
 		std::cout << std::fixed << std::setprecision(1) << this->d_arg << std::endl;
 	}
 	else
-		std::cout << this->def << ".0" << std::endl;
+		std::cout << this->def << std::endl;
 }
 
 int Convert::getType() const {
