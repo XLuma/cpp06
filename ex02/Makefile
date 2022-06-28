@@ -1,8 +1,8 @@
-NAME = conversion
+NAME = identify
 CPP = c++
 FLAGS = -Wall -Werror -Wextra
 STD = -std=c++98
-SRCS = main.cpp Convert.cpp
+SRCS = main.cpp Base.cpp A.cpp B.cpp C.cpp
 .cpp.o:
 	@c++ ${FLAGS}  -c $< -o ${<:.cpp=.o}
 OBJS = ${SRCS:.cpp=.o}
